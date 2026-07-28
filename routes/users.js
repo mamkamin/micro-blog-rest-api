@@ -3,6 +3,7 @@ const router = express.Router();
 
 const { db } = require('../db');
 const bcrypt = require('bcrypt');
+const jwt = require('jsonwebtoken');
 
 const saltRounds = 10;
 
@@ -23,6 +24,47 @@ router.post('/', async (req, res) => {
     } catch (err) {
         console.log(`[SERVER ERROR]: ${err}`);
         res.status(500).json({
+            message: 'Internal server error'
+        });
+    }
+});
+
+router.post('/login', async (req, res, next) => {
+    const { username, email, password } = req.body;
+    if (!username && !email) {
+        return res.status(400).json({
+            message: 'Username or email required'
+        });
+    }
+    try {
+        const user = await db.users.findByNameOrEmail(username, email);
+        if (!user) {
+            return res.status(404).json({
+                message: 'User not found'
+            });
+        }
+        const isMatched = await bcrypt.compare(password, user.password_hash);
+        if (!isMatched) {
+            return res.status(401).json({
+                message: 'Unauthorized access'
+            });
+        }
+
+        const payload = {
+            id: user.id,
+        };
+
+        const token = jwt.sign(payload, process.env.JWT_SECRET, {
+            expiresIn: '1h'
+        });
+
+        return res.status(200).json({
+            message: 'Login successfully',
+            token
+        });
+    } catch (err) {
+        console.log(`[SERVER ERROR]: ${err}`);
+        return res.status(500).json({
             message: 'Internal server error'
         });
     }

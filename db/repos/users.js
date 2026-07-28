@@ -9,6 +9,10 @@ class UsersRepository {
     add(username, email, password) {
         return this.db.one(sql.add, [username, email, password]);
     }
+
+    findByNameOrEmail(username, email) {
+        return this.db.oneOrNone(sql.findByNameOrEmail, [username, email]);
+    }
 }
 
 module.exports = UsersRepository;
