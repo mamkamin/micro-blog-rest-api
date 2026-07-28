@@ -132,4 +132,23 @@ router.delete('/:id', authenticateJWT, async (req, res) => {
     }
 });
 
+router.patch('/:id', authenticateJWT, async (req, res) => {
+    const { id } = req.params;
+    const data = req.body;
+    console.log('[LOG]:', data);
+
+    try {
+        const changes = await db.users.update(id, data);
+        return res.status(200).json({
+            message: 'Update user successfully',
+            user: changes
+        });
+    } catch (err) {
+        console.log('[SERVER ERROR]:', err);
+        return res.status(500).json({
+            message: 'Internal server error'
+        });
+    }
+});
+
 module.exports = router;
