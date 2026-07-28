@@ -70,54 +70,53 @@ router.post('/login', async (req, res, next) => {
     }
 });
 
-router.get('/:id',
-    (req, res, next) => {
-        const authHeader = req.headers.authorization;
-        if (!authHeader) {
-            return res.status(401).json({
-                message: 'Unauthorized access'
-            });
-        }
-
-        const [ scheme, token ] = authHeader.split(" ");
-        if (scheme?.toLowerCase() !== 'bearer' || !token) {
-            return res.status(401).json({
-                message: 'Unauthorized access'
-            });
-        }
-
-        jwt.verify(token, process.env.JWT_SECRET, (err, decoded) => {
-            if (err) {
-                if (err.name === 'JsonWebTokenError') {
-                    return res.status(401).json(err);
-                }
-                return res.status(500).json(err);
-            }
-
-            if (decoded.id !== req.params.id) {
-                return res.status(403).json({
-                    message: 'Forbidden'
-                });
-            }
-            console.log("[LOG]:", decoded);
-            req.payload = decoded;
-            next();
-        });
-    },
-    async (req, res) => {
-        const { id } = req.params;
-        const user = await db.users.findById(id);
-        if (!user) {
-            return res.status(400).json({
-                message: 'User not found'
-            });
-        }
-
-        return res.status(200).json({
-            message: 'User found',
-            user
+const authenticateJWT = (req, res, next) => {
+    const authHeader = req.headers.authorization;
+    if (!authHeader) {
+        return res.status(401).json({
+            message: 'Unauthorized access'
         });
     }
-);
+
+    const [scheme, token] = authHeader.split(" ");
+    if (scheme?.toLowerCase() !== 'bearer' || !token) {
+        return res.status(401).json({
+            message: 'Unauthorized access'
+        });
+    }
+
+    jwt.verify(token, process.env.JWT_SECRET, (err, decoded) => {
+        if (err) {
+            if (err.name === 'JsonWebTokenError') {
+                return res.status(401).json(err);
+            }
+            return res.status(500).json(err);
+        }
+
+        if (decoded.id !== req.params.id) {
+            return res.status(403).json({
+                message: 'Forbidden'
+            });
+        }
+        console.log("[LOG]:", decoded);
+        req.payload = decoded;
+        next();
+    });
+};
+
+router.get('/:id', authenticateJWT, async (req, res) => {
+    const { id } = req.params;
+    const user = await db.users.findById(id);
+    if (!user) {
+        return res.status(400).json({
+            message: 'User not found'
+        });
+    }
+
+    return res.status(200).json({
+        message: 'User found',
+        user
+    });
+});
 
 module.exports = router;
