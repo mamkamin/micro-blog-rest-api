@@ -6,7 +6,7 @@ const bcrypt = require('bcrypt');
 
 const saltRounds = 10;
 
-router.post('/', async (req, res, next) => {
+router.post('/', async (req, res) => {
     const { username, email, password } = req.body;
     if (!username || !email || !password) {
         res.status(400).json({
@@ -16,7 +16,7 @@ router.post('/', async (req, res, next) => {
     try {
         const hashedPassword = await bcrypt.hash(password, saltRounds);
         const result = await db.users.add(username, email, hashedPassword);
-        return res.status(200).json({
+        return res.status(201).json({
             message: 'Added user successfully',
             users: result
         });
