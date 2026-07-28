@@ -13,6 +13,10 @@ class UsersRepository {
     findByNameOrEmail(username, email) {
         return this.db.oneOrNone(sql.findByNameOrEmail, [username, email]);
     }
+
+    findById(id) {
+        return this.db.oneOrNone(sql.findById, id);
+    }
 }
 
 module.exports = UsersRepository;

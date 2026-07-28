@@ -4,7 +4,8 @@ const { join } = require('path');
 module.exports = {
     users: {
         add: sql('users/add.sql'),
-        findByNameOrEmail: sql('users/findByNameOrEmail.sql')
+        findByNameOrEmail: sql('users/findByNameOrEmail.sql'),
+        findById: sql('users/findById.sql')
     }
 };
 
