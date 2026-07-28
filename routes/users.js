@@ -8,6 +8,11 @@ const saltRounds = 10;
 
 router.post('/', async (req, res, next) => {
     const { username, email, password } = req.body;
+    if (!username || !email || !password) {
+        res.status(400).json({
+            message: 'Username, email and password required'
+        });
+    }
     try {
         const hashedPassword = await bcrypt.hash(password, saltRounds);
         const result = await db.users.add(username, email, hashedPassword);
@@ -16,8 +21,10 @@ router.post('/', async (req, res, next) => {
             users: result
         });
     } catch (err) {
-        console.log(`Something went wrong: ${err}`);
-        next(err);
+        console.log(`[SERVER ERROR]: ${err}`);
+        res.status(500).json({
+            message: 'Internal server error'
+        });
     }
 });
 
