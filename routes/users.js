@@ -119,4 +119,17 @@ router.get('/:id', authenticateJWT, async (req, res) => {
     });
 });
 
+router.delete('/:id', authenticateJWT, async (req, res) => {
+    const { id } = req.params;
+    try {
+        db.users.delete(id);
+        return res.sendStatus(204);
+    } catch (err) {
+        console.log('[SERVER ERROR]:', err);
+        return res.status(500).json({
+            message: 'Internal server error'
+        });
+    }
+});
+
 module.exports = router;

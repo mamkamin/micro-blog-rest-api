@@ -5,7 +5,8 @@ module.exports = {
     users: {
         add: sql('users/add.sql'),
         findByNameOrEmail: sql('users/findByNameOrEmail.sql'),
-        findById: sql('users/findById.sql')
+        findById: sql('users/findById.sql'),
+        delete: sql('users/delete.sql')
     }
 };
 

@@ -17,6 +17,10 @@ class UsersRepository {
     findById(id) {
         return this.db.oneOrNone(sql.findById, id);
     }
+
+    delete(id) {
+        this.db.none(sql.delete, id);
+    }
 }
 
 module.exports = UsersRepository;
