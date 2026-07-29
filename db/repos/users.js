@@ -46,7 +46,7 @@ class UsersRepository {
     }
 
     delete(id) {
-        this.db.none(sql.delete, id);
+        this.db.none(sql.delete, [id]);
     }
 
     update(id, changes) {

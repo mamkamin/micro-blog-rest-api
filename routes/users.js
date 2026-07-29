@@ -4,6 +4,7 @@ const router = express.Router();
 const { db } = require('../db');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
+const authenticateJWT = require('../jwt_helper');
 
 const saltRounds = 10;
 
@@ -70,42 +71,8 @@ router.post('/login', async (req, res, next) => {
     }
 });
 
-const authenticateJWT = (req, res, next) => {
-    const authHeader = req.headers.authorization;
-    if (!authHeader) {
-        return res.status(401).json({
-            message: 'Unauthorized access'
-        });
-    }
-
-    const [scheme, token] = authHeader.split(" ");
-    if (scheme?.toLowerCase() !== 'bearer' || !token) {
-        return res.status(401).json({
-            message: 'Unauthorized access'
-        });
-    }
-
-    jwt.verify(token, process.env.JWT_SECRET, (err, decoded) => {
-        if (err) {
-            if (err.name === 'JsonWebTokenError') {
-                return res.status(401).json(err);
-            }
-            return res.status(500).json(err);
-        }
-
-        if (decoded.id !== req.params.id) {
-            return res.status(403).json({
-                message: 'Forbidden'
-            });
-        }
-        console.log("[LOG]:", decoded);
-        req.payload = decoded;
-        next();
-    });
-};
-
-router.get('/:id', authenticateJWT, async (req, res) => {
-    const { id } = req.params;
+router.get('/:user_id', authenticateJWT, async (req, res) => {
+    const { user_id: id } = req.params;
     const user = await db.users.findById(id);
     if (!user) {
         return res.status(400).json({
@@ -119,7 +86,7 @@ router.get('/:id', authenticateJWT, async (req, res) => {
     });
 });
 
-router.delete('/:id', authenticateJWT, async (req, res) => {
+router.delete('/:user_id', authenticateJWT, async (req, res) => {
     const { id } = req.params;
     try {
         db.users.delete(id);
@@ -132,7 +99,7 @@ router.delete('/:id', authenticateJWT, async (req, res) => {
     }
 });
 
-router.patch('/:id', authenticateJWT, async (req, res) => {
+router.patch('/:user_id', authenticateJWT, async (req, res) => {
     const { id } = req.params;
     const data = req.body;
     console.log('[LOG]:', data);

@@ -7,6 +7,9 @@ module.exports = {
         findByNameOrEmail: sql('users/findByNameOrEmail.sql'),
         findById: sql('users/findById.sql'),
         delete: sql('users/delete.sql')
+    },
+    posts: {
+        add: sql('posts/add.sql'),
     }
 };
 
