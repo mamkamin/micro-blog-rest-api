@@ -22,6 +22,32 @@ router.post('/:user_id', authenticateJWT, async (req, res) => {
     }
 });
 
+router.get('/:user_id', async (req, res) => {
+    const { user_id } = req.params;
+    let { page, limit } = req.query;
+
+    if (!limit) {
+        limit = 10;
+    }
+
+    if (!page) {
+        page = 1;
+    }
+
+    try {
+        const results = await db.posts.view(user_id, limit, page);
+        return res.status(200).json({
+            message: 'Retrieved posts successfully',
+            posts: results
+        });
+    } catch (error) {
+        console.log('[SERVER ERROR]:', error);
+        return res.status(500).json({
+            message: 'Internal server error'
+        });
+    }
+});
+
 router.patch('/:user_id/:post_id', authenticateJWT, async (req, res) => {
     const { body } = req.body;
     const { user_id, post_id } = req.params;
