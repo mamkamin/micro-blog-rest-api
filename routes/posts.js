@@ -26,13 +26,11 @@ router.get('/:user_id', async (req, res) => {
     const { user_id } = req.params;
     let { page, limit } = req.query;
 
-    if (!limit) {
-        limit = 10;
-    }
-
-    if (!page) {
-        page = 1;
-    }
+    const page = Math.max(parseInt(req.query.page, 10) || 1, 1);
+    const limit = Math.min(
+        Math.max(parseInt(req.query.limit, 10) || 10, 1),
+        100
+    );
 
     try {
         const results = await db.posts.view(user_id, limit, page);
