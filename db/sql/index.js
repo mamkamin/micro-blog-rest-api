@@ -10,6 +10,7 @@ module.exports = {
     },
     posts: {
         add: sql('posts/add.sql'),
+        delete: sql('posts/delete.sql')
     }
 };
 

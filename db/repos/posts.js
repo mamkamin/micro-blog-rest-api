@@ -9,6 +9,10 @@ class PostsRepository {
     add(body, user_id) {
         return this.db.one(sql.add, [body, user_id]);
     }
+
+    delete(id, user_id) {
+        return this.db.none(sql.delete, [id, user_id]);
+    }
 }
 
 module.exports = PostsRepository;

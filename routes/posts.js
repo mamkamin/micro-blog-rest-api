@@ -22,4 +22,18 @@ router.post('/:user_id', authenticateJWT, async (req, res) => {
     }
 });
 
+router.delete('/:user_id/:post_id', authenticateJWT, async (req, res) => {
+    const { user_id, post_id } = req.params;
+
+    try {
+        await db.posts.delete(post_id, user_id);
+        return res.sendStatus(204);
+    } catch (error) {
+        console.log('[SERVER ERROR]:', error);
+        return res.status(500).json({
+            message: 'Internal server error'
+        });
+    }
+});
+
 module.exports = router;
