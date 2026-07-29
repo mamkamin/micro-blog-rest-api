@@ -22,6 +22,24 @@ router.post('/:user_id', authenticateJWT, async (req, res) => {
     }
 });
 
+router.patch('/:user_id/:post_id', authenticateJWT, async (req, res) => {
+    const { body } = req.body;
+    const { user_id, post_id } = req.params;
+
+    try {
+        const updated = await db.posts.update(post_id, user_id, body);
+        return res.status(200).json({
+            message: 'Update post successfully',
+            post: updated
+        });
+    } catch (error) {
+        console.log('[SERVER ERROR]:', error);
+        return res.status(500).json({
+            message: 'Internal server error'
+        });
+    }
+});
+
 router.delete('/:user_id/:post_id', authenticateJWT, async (req, res) => {
     const { user_id, post_id } = req.params;
 

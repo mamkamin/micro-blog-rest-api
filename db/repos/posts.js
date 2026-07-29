@@ -13,6 +13,10 @@ class PostsRepository {
     delete(id, user_id) {
         return this.db.none(sql.delete, [id, user_id]);
     }
+
+    update(id, user_id, text) {
+        return this.db.oneOrNone(sql.update, [id, user_id, text]);
+    }
 }
 
 module.exports = PostsRepository;
