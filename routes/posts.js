@@ -24,7 +24,6 @@ router.post('/:user_id', authenticateJWT, async (req, res) => {
 
 router.get('/:user_id', async (req, res) => {
     const { user_id } = req.params;
-    let { page, limit } = req.query;
 
     const page = Math.max(parseInt(req.query.page, 10) || 1, 1);
     const limit = Math.min(
