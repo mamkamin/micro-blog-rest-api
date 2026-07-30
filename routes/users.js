@@ -97,8 +97,8 @@ router.get('/me', authenticateJWT, async (req, res) => {
     });
 });
 
-router.delete('/:user_id', authenticateJWT, async (req, res) => {
-    const { id } = req.params;
+router.delete('/me', authenticateJWT, async (req, res) => {
+    const { id } = req.user;
     try {
         db.users.delete(id);
         return res.sendStatus(204);
@@ -110,8 +110,8 @@ router.delete('/:user_id', authenticateJWT, async (req, res) => {
     }
 });
 
-router.patch('/:user_id', authenticateJWT, async (req, res) => {
-    const { id } = req.params;
+router.patch('/me', authenticateJWT, async (req, res) => {
+    const { id } = req.user;
     const data = req.body;
     console.log('[LOG]:', data);
 
