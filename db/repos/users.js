@@ -45,6 +45,10 @@ class UsersRepository {
         return this.db.oneOrNone(sql.findById, id);
     }
 
+    findByUsername(username) {
+        return this.db.oneOrNone(sql.findByUsername, username);
+    }
+
     delete(id) {
         this.db.none(sql.delete, [id]);
     }

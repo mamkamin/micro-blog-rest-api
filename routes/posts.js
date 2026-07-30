@@ -4,9 +4,9 @@ const router = express.Router();
 const authenticateJWT = require('../jwt_helper');
 const { db } = require('../db');
 
-router.post('/:user_id', authenticateJWT, async (req, res) => {
+router.post('/', authenticateJWT, async (req, res) => {
     const { body } = req.body;
-    const { user_id: id } = req.params;
+    const { id } = req.user;
 
     try {
         const returning = await db.posts.add(body, id);
@@ -22,8 +22,9 @@ router.post('/:user_id', authenticateJWT, async (req, res) => {
     }
 });
 
-router.get('/:user_id', async (req, res) => {
-    const { user_id } = req.params;
+router.get('/:username', async (req, res) => {
+    const { username } = req.params;
+    
 
     const page = Math.max(parseInt(req.query.page, 10) || 1, 1);
     const limit = Math.min(
@@ -32,6 +33,7 @@ router.get('/:user_id', async (req, res) => {
     );
 
     try {
+        const { id: user_id } = await db.users.findByUsername(username);
         const results = await db.posts.view(user_id, limit, page);
         return res.status(200).json({
             message: 'Retrieved posts successfully',
@@ -45,9 +47,10 @@ router.get('/:user_id', async (req, res) => {
     }
 });
 
-router.patch('/:user_id/:post_id', authenticateJWT, async (req, res) => {
+router.patch('/:post_id', authenticateJWT, async (req, res) => {
     const { body } = req.body;
-    const { user_id, post_id } = req.params;
+    const { post_id } = req.params;
+    const { id: user_id } = req.user;
 
     try {
         const updated = await db.posts.update(post_id, user_id, body);
@@ -63,8 +66,9 @@ router.patch('/:user_id/:post_id', authenticateJWT, async (req, res) => {
     }
 });
 
-router.delete('/:user_id/:post_id', authenticateJWT, async (req, res) => {
-    const { user_id, post_id } = req.params;
+router.delete('/:post_id', authenticateJWT, async (req, res) => {
+    const { post_id } = req.params;
+    const { id: user_id } = req.user;
 
     try {
         await db.posts.delete(post_id, user_id);
