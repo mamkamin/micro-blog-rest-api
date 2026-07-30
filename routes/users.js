@@ -30,6 +30,21 @@ router.post('/', async (req, res) => {
     }
 });
 
+router.get('/username', async (req, res) => {
+    try {
+        const rows = await db.users.findAllUsername();
+        return res.status(200).json({
+            message: `Found ${rows.length} users`,
+            users: rows
+        });
+    } catch (error) {
+        console.log(`[SERVER ERROR]: ${err}`);
+        res.status(500).json({
+            message: 'Internal server error'
+        });
+    }
+});
+
 router.post('/login', async (req, res, next) => {
     const { username, email, password } = req.body;
     if (!username && !email) {
