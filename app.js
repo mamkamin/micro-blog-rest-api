@@ -5,11 +5,13 @@ const express = require('express');
 const indexRouter = require('./routes/index');
 const usersRouter = require('./routes/users');
 const postsRouter = require('./routes/posts');
+const cookieParser = require('cookie-parser');
 
 const app = express();
 const port = process.env.PORT || 3000;
 
 app.use(express.json());
+app.use(cookieParser());
 
 app.use('/', indexRouter);
 app.use('/api/v1/users', usersRouter);

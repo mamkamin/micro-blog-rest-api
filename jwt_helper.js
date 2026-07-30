@@ -1,37 +1,26 @@
 const jwt = require('jsonwebtoken');
 
+/**
+ * 
+ * @param {Express.Request} req 
+ * @param {Express.Response} res 
+ * @param {*} next 
+ */
 const authenticateJWT = (req, res, next) => {
-    const authHeader = req.headers.authorization;
-    if (!authHeader) {
-        return res.status(401).json({
-            message: 'Unauthorized access'
-        });
+    const token = req.cookies.access_token;
+
+    if (!token) {
+        return res.status(401).json({ message: 'Authentication required' });
     }
 
-    const [scheme, token] = authHeader.split(" ");
-    if (scheme?.toLowerCase() !== 'bearer' || !token) {
-        return res.status(401).json({
-            message: 'Unauthorized access'
-        });
-    }
-
-    jwt.verify(token, process.env.JWT_SECRET, (err, decoded) => {
-        if (err) {
-            if (err.name === 'JsonWebTokenError') {
-                return res.status(401).json(err);
-            }
-            return res.status(500).json(err);
-        }
-
-        if (decoded.id !== req.params.user_id) {
-            return res.status(403).json({
-                message: 'Forbidden'
-            });
-        }
-        console.log("[LOG]:", decoded);
-        req.payload = decoded;
+    try {
+        req.user = jwt.verify(token, process.env.JWT_SECRET);
         next();
-    });
+    } catch (error) {
+        return res.status(401).json({
+            message: 'Invalid or expired session'
+        });
+    }
 };
 
 module.exports = authenticateJWT;

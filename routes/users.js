@@ -59,9 +59,20 @@ router.post('/login', async (req, res, next) => {
             expiresIn: '1h'
         });
 
+        res.cookie('access_token', token, {
+            httpOnly: true,
+            secure: process.env.NODE_ENV === 'production',
+            sameSite: 'lax',
+            maxAge: 60 * 60 * 1000,
+            path: '/'
+        });
+
         return res.status(200).json({
             message: 'Login successfully',
-            token
+            user: {
+                id: user.id,
+                username: user.username,
+            }
         });
     } catch (err) {
         console.log(`[SERVER ERROR]: ${err}`);
@@ -71,8 +82,8 @@ router.post('/login', async (req, res, next) => {
     }
 });
 
-router.get('/:user_id', authenticateJWT, async (req, res) => {
-    const { user_id: id } = req.params;
+router.get('/me', authenticateJWT, async (req, res) => {
+    const { id } = req.user;
     const user = await db.users.findById(id);
     if (!user) {
         return res.status(400).json({
