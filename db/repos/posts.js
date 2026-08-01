@@ -21,6 +21,10 @@ class PostsRepository {
     update(id, user_id, text) {
         return this.db.oneOrNone(sql.update, [id, user_id, text]);
     }
+
+    findLatest(limit, page) {
+        return this.db.manyOrNone(sql.findLatest, [limit, page]);
+    }
 }
 
 module.exports = PostsRepository;
