@@ -7,13 +7,15 @@ module.exports = {
         findByNameOrEmail: sql('users/findByNameOrEmail.sql'),
         findById: sql('users/findById.sql'),
         delete: sql('users/delete.sql'),
-        findByUsername: sql('users/findByUsername.sql')
+        findByUsername: sql('users/findByUsername.sql'),
+        findAllUsername: sql('users/findAllUsername.sql'),
     },
     posts: {
         add: sql('posts/add.sql'),
         view: sql('posts/view.sql'),
         update: sql('posts/update.sql'),
-        delete: sql('posts/delete.sql')
+        delete: sql('posts/delete.sql'),
+        findLatest: sql('posts/findLatest.sql')
     }
 };
 

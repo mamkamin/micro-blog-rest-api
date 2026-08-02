@@ -30,6 +30,21 @@ router.post('/', async (req, res) => {
     }
 });
 
+router.get('/username', async (req, res) => {
+    try {
+        const rows = await db.users.findAllUsername();
+        return res.status(200).json({
+            message: `Found ${rows.length} users`,
+            users: rows
+        });
+    } catch (error) {
+        console.log(`[SERVER ERROR]: ${err}`);
+        res.status(500).json({
+            message: 'Internal server error'
+        });
+    }
+});
+
 router.post('/login', async (req, res, next) => {
     const { username, email, password } = req.body;
     if (!username && !email) {
@@ -82,6 +97,17 @@ router.post('/login', async (req, res, next) => {
     }
 });
 
+router.post('/logout', (req, res) => {
+    res.clearCookie('access_token', {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === 'production',
+        sameSite: 'lax',
+        path: '/'
+    });
+
+    return res.sendStatus(204);
+});
+
 router.get('/me', authenticateJWT, async (req, res) => {
     const { id } = req.user;
     const user = await db.users.findById(id);
@@ -91,9 +117,11 @@ router.get('/me', authenticateJWT, async (req, res) => {
         });
     }
 
+    const { password_hash, ...noPassUser } = user;
+
     return res.status(200).json({
         message: 'User found',
-        user
+        user: noPassUser
     });
 });
 
@@ -123,6 +151,11 @@ router.patch('/me', authenticateJWT, async (req, res) => {
         });
     } catch (err) {
         console.log('[SERVER ERROR]:', err);
+        if (err.code === '23505') {
+            return res.status(409).json({
+                message: 'Username or email already exists'
+            });
+        }
         return res.status(500).json({
             message: 'Internal server error'
         });

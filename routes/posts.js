@@ -24,7 +24,6 @@ router.post('/', authenticateJWT, async (req, res) => {
 
 router.get('/:username', async (req, res) => {
     const { username } = req.params;
-    
 
     const page = Math.max(parseInt(req.query.page, 10) || 1, 1);
     const limit = Math.min(
@@ -41,6 +40,27 @@ router.get('/:username', async (req, res) => {
         });
     } catch (error) {
         console.log('[SERVER ERROR]:', error);
+        return res.status(500).json({
+            message: 'Internal server error'
+        });
+    }
+});
+
+router.get('/', async (req, res) => {
+    const page = Math.max(parseInt(req.query.page, 10) || 1, 1);
+    const limit = Math.min(
+        Math.max(parseInt(req.query.limit, 10) || 10, 1),
+        100
+    );
+
+    try {
+        const results = await db.posts.findLatest(limit, page);
+        return res.status(200).json({
+            message: 'Retrieved posts successfully',
+            posts: results
+        });
+    } catch (error) {
+        console.log('[SERVER ERROR]', error);
         return res.status(500).json({
             message: 'Internal server error'
         });
