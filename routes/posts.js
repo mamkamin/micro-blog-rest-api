@@ -91,6 +91,13 @@ router.delete('/:post_id', authenticateJWT, async (req, res) => {
     const { id: user_id } = req.user;
 
     try {
+        const found = await db.posts.findByIdAndUserId(post_id, user_id);
+        if (!found) {
+            return res.status(404).json({
+                message: 'Post doesn\'t exists'
+            });
+        }
+        // Guarantee to exists since we've checked
         await db.posts.delete(post_id, user_id);
         return res.sendStatus(204);
     } catch (error) {

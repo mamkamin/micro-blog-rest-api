@@ -15,7 +15,8 @@ module.exports = {
         view: sql('posts/view.sql'),
         update: sql('posts/update.sql'),
         delete: sql('posts/delete.sql'),
-        findLatest: sql('posts/findLatest.sql')
+        findLatest: sql('posts/findLatest.sql'),
+        findByIdAndUserId: sql('posts/findByIdandUserId.sql')
     }
 };
 

@@ -15,7 +15,7 @@ class PostsRepository {
     }
 
     delete(id, user_id) {
-        return this.db.none(sql.delete, [id, user_id]);
+        return this.db.result(sql.delete, [id, user_id]);
     }
 
     update(id, user_id, text) {
@@ -24,6 +24,10 @@ class PostsRepository {
 
     findLatest(limit, page) {
         return this.db.manyOrNone(sql.findLatest, [limit, page]);
+    }
+
+    findByIdAndUserId(id, user_id) {
+        return this.db.oneOrNone(sql.findByIdAndUserId, [id, user_id]);
     }
 }
 

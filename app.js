@@ -21,7 +21,4 @@ app.use('/', indexRouter);
 app.use('/api/v1/users', usersRouter);
 app.use('/api/v1/posts', postsRouter);
 
-
-app.listen(port, () => {
-    console.log(`Listening on port:${port}`);
-});
+module.exports = app;

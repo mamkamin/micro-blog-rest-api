@@ -11,7 +11,7 @@ const saltRounds = 10;
 router.post('/', async (req, res) => {
     const { username, email, password } = req.body;
     if (!username || !email || !password) {
-        res.status(400).json({
+        return res.status(400).json({
             message: 'Username, email and password required'
         });
     }
@@ -24,7 +24,7 @@ router.post('/', async (req, res) => {
         });
     } catch (err) {
         console.log(`[SERVER ERROR]: ${err}`);
-        res.status(500).json({
+        return res.status(500).json({
             message: 'Internal server error'
         });
     }
