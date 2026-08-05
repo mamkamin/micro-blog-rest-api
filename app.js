@@ -8,7 +8,6 @@ const postsRouter = require('./routes/posts');
 const cookieParser = require('cookie-parser');
 const cors = require('cors');
 const app = express();
-const port = process.env.PORT || 3000;
 
 app.use(express.json());
 app.use(cookieParser());
