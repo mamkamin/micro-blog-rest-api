@@ -93,7 +93,7 @@ The API is available at `http://localhost:3000`. Stop the services with `docker 
 | `PATCH` | `/api/v1/posts/:post_id` | Update an owned post |
 | `DELETE` | `/api/v1/posts/:post_id` | Delete an owned post |
 
-Authenticated routes use the `access_token` HTTP-only cookie set by the login endpoint. Example curl scripts are available under `test/curl`.
+Authenticated routes use the `access_token` HTTP-only cookie set by the login endpoint. Run the Supertest suite with `npm test`.
 
 ## Features
 
@@ -115,4 +115,4 @@ Authenticated routes use the `access_token` HTTP-only cookie set by the login en
 - [ ] A feed containing posts from followed users
 - [ ] Public user profile details
 - [ ] Post likes and replies
-- [ ] Automated test suite
+- [x] Automated test suite with Node.js and Supertest
